@@ -9,7 +9,7 @@ import ProductViewer from "@/components/ProductViewer";
 import { useGsap } from "@/lib/gsap";
 import { useCart } from "@/lib/cart-context";
 import { useAuth } from "@/lib/auth-context";
-import { apiFetch } from "@/lib/api";
+import { apiFetch, resolveImageUrl } from "@/lib/api";
 import { trackEvent } from "@/lib/analytics";
 import { Product } from "@/lib/products";
 import ProductReviews, { ReviewSummaryBadge } from "@/components/ProductReviews";
@@ -95,8 +95,8 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
             discountPct: p.discount_pct ?? undefined,
             freeShipping: p.free_shipping,
             voucherCode: p.voucher_code ?? undefined,
-            imageUrls: p.image_urls.map((url: string) => `${API_BASE}${url}`),
-            videoUrl: p.video_url ? `${API_BASE}${p.video_url}` : undefined,
+            imageUrls: p.image_urls.map((url: string) => resolveImageUrl(url)),
+            videoUrl: p.video_url ? resolveImageUrl(p.video_url) : undefined,
           });
           trackEvent("product_view", p.id);
         }

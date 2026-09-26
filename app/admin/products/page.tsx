@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
-import { apiFetch } from "@/lib/api";
+import { apiFetch, resolveImageUrl } from "@/lib/api";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
@@ -76,7 +76,7 @@ export default function AdminProductsPage() {
             >
               <div
                 className="w-16 h-16 rounded-lg bg-[#F3F2EE] bg-cover bg-center flex-shrink-0"
-                style={p.image_urls[0] ? { backgroundImage: `url(${API_BASE}${p.image_urls[0]})` } : undefined}
+                style={p.image_urls[0] ? { backgroundImage: `url(${resolveImageUrl(p.image_urls[0])})` } : undefined}
               />
               <div className="flex-1">
                 <div className="text-sm font-semibold flex items-center gap-2">

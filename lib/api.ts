@@ -8,6 +8,11 @@
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
+export function resolveImageUrl(url: string | null | undefined): string {
+  if (!url) return "";
+  return url.startsWith("http") ? url : `${API_BASE}${url}`;
+}
+
 let accessToken: string | null = null;
 let refreshInFlight: Promise<boolean> | null = null;
 

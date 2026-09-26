@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import ProductGrid from "@/components/ProductGrid";
-import { apiFetch } from "@/lib/api";
+import { apiFetch, resolveImageUrl } from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
 import { Product } from "@/lib/products";
 
@@ -38,7 +38,7 @@ export default function WishlistPage() {
               originalPrice: p.discount_pct ? original : undefined,
               discountPct: p.discount_pct ?? undefined,
               freeShipping: p.free_shipping,
-              imageUrl: p.image_urls[0] ? `${API_BASE}${p.image_urls[0]}` : undefined,
+              imageUrl: p.image_urls[0] ? resolveImageUrl(p.image_urls[0]) : undefined,
             };
           })
         );

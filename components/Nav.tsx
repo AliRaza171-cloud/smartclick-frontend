@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useAuth } from "@/lib/auth-context";
 import { useCart } from "@/lib/cart-context";
 import { fetchCategories, CategoryMeta } from "@/lib/categories";
+import { resolveImageUrl } from "@/lib/api";
 import NotificationBell from "./NotificationBell";
 import PromoScroller from "./PromoScroller";
 import SearchBar from "./SearchBar";
@@ -224,7 +225,7 @@ function ProductPreviewPanel({ href, label, products }: { href: string; label: s
                 <div className="w-11 h-11 rounded-md bg-white/10 overflow-hidden flex-shrink-0">
                   {p.image_urls[0] && (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={`${API_BASE}${p.image_urls[0]}`} alt="" className="w-full h-full object-cover" />
+                    <img src={`${resolveImageUrl(p.image_urls[0])}`} alt="" className="w-full h-full object-cover" />
                   )}
                 </div>
                 <div className="min-w-0">

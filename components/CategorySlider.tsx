@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { useGsap } from "@/lib/gsap";
 import { CategoryMeta } from "@/lib/categories";
+import { resolveImageUrl } from "@/lib/api";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
@@ -45,7 +46,7 @@ export default function CategorySlider({ items }: { items: CategoryMeta[] }) {
               className="relative h-40 w-56 flex-shrink-0 rounded-2xl overflow-hidden border border-sc-border flex items-end p-5 font-semibold text-sm"
               style={{
                 backgroundColor: "white",
-                backgroundImage: c.image_url ? `url(${API_BASE}${c.image_url})` : undefined,
+                backgroundImage: c.image_url ? `url(${resolveImageUrl(c.image_url)})` : undefined,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
               }}

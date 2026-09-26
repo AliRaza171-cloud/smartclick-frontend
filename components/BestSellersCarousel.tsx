@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { resolveImageUrl } from "@/lib/api";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 const ADVANCE_EVERY_MS = 3500;
@@ -41,7 +42,7 @@ export default function BestSellersCarousel() {
   return (
     <div className="relative w-full h-full flex items-center justify-center" style={{ perspective: "1400px" }}>
       {visibleSlots.map(({ offset, product }) => {
-        const img = `${API_BASE}${product.image_urls[0]}`;
+        const img = `${resolveImageUrl(product.image_urls[0])}`;
         const isCenter = offset === 0;
 
         return (

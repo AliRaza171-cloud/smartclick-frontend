@@ -3,6 +3,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { fetchCategories } from "@/lib/categories";
 import { fetchProducts } from "@/lib/server-products";
+import { resolveImageUrl } from "@/lib/api";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
@@ -30,7 +31,7 @@ export default async function CategoriesOverviewPage() {
                   style={
                     c.image_url
                       ? {
-                          backgroundImage: `linear-gradient(to top, rgba(14,23,18,0.75), rgba(14,23,18,0.15)), url(${API_BASE}${c.image_url})`,
+                          backgroundImage: `linear-gradient(to top, rgba(14,23,18,0.75), rgba(14,23,18,0.15)), url(${resolveImageUrl(c.image_url)})`,
                           backgroundSize: "cover",
                           backgroundPosition: "center",
                         }

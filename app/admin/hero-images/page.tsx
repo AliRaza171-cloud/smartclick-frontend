@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth-context";
-import { apiFetch, apiFetchMultipart, extractErrorMessage } from "@/lib/api";
+import { apiFetch, apiFetchMultipart, extractErrorMessage, resolveImageUrl } from "@/lib/api";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
@@ -142,7 +142,7 @@ export default function AdminHeroImagesPage() {
             <div key={img.id} className="relative group">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={`${API_BASE}${img.image_url}`}
+                src={`${resolveImageUrl(img.image_url)}`}
                 alt=""
                 className="w-full aspect-square object-cover rounded-lg border border-sc-border bg-[#F3F2EE]"
               />
@@ -168,7 +168,7 @@ export default function AdminHeroImagesPage() {
             <div key={img.id} className="relative group">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={`${API_BASE}${img.image_url}`}
+                src={`${resolveImageUrl(img.image_url)}`}
                 alt=""
                 className="w-full aspect-[3/1] object-cover rounded-lg border border-sc-border bg-[#F3F2EE]"
               />

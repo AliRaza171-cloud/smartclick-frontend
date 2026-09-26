@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/lib/auth-context";
-import { apiFetch, getAccessToken } from "@/lib/api";
+import { apiFetch, getAccessToken, resolveImageUrl } from "@/lib/api";
 import { fetchCategories, CategoryMeta } from "@/lib/categories";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
@@ -65,7 +65,7 @@ export default function AdminCategoriesPage() {
             <div key={c.id} className="bg-white border border-sc-border rounded-xl p-4 flex items-center gap-4">
               <div
                 className="w-20 h-20 rounded-lg bg-[#F3F2EE] bg-cover bg-center flex-shrink-0"
-                style={c.image_url ? { backgroundImage: `url(${API_BASE}${c.image_url})` } : undefined}
+                style={c.image_url ? { backgroundImage: `url(${resolveImageUrl(c.image_url)})` } : undefined}
               />
               <div className="flex-1">
                 <div className="text-sm font-semibold">{c.name}</div>
