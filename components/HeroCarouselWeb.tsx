@@ -41,7 +41,7 @@ export default function HeroCarouselWeb() {
   if (images.length === 0) return null;
 
   return (
-    <div className="px-6 md:px-18 pb-6">
+    <div className="px-6 md:px-18 pt-6 pb-6">
       <div className="relative w-full h-[220px] md:h-[320px] rounded-2xl overflow-hidden bg-sc-bg">
         <div
           className="flex h-full transition-transform duration-500 ease-out"

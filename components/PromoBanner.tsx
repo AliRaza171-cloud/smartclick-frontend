@@ -30,7 +30,7 @@ export default function PromoBanner() {
       <img
         src={resolveImageUrl(image.image_url)}
         alt=""
-        className="w-full h-24 md:h-32 object-cover rounded-2xl"
+        className="w-full h-36 md:h-48 object-cover rounded-2xl"
       />
     </div>
   );
