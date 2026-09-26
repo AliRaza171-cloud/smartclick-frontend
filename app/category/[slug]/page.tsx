@@ -5,6 +5,7 @@ import ProductGrid from "@/components/ProductGrid";
 import Footer from "@/components/Footer";
 import { fetchCategories, getCategoryBySlug } from "@/lib/categories";
 import { fetchProducts } from "@/lib/server-products";
+export const dynamic = "force-dynamic";
 
 // Categories are dynamic now (an admin can add one at any time), so this
 // fetches the current list at build/request time instead of a fixed array.
