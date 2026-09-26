@@ -1,5 +1,6 @@
 import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
+import PromoBanner from "@/components/PromoBanner";
 import CategoryStrip from "@/components/CategoryStrip";
 import ProductGrid from "@/components/ProductGrid";
 import Footer from "@/components/Footer";
@@ -12,6 +13,7 @@ export default async function HomePage() {
     <main>
       <Nav />
       <Hero />
+      <PromoBanner />
       <CategoryStrip />
       {products.length > 0 ? (
         <ProductGrid
