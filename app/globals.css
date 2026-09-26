@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --sc-bg: #F3F2EE;
+  --sc-surface: #FFFFFF;
+  --sc-border: #E1DFD8;
+  --sc-ink: #141413;
+  --sc-muted: #5A574E;
+  --sc-faint: #8A8678;
+  --sc-accent: #0F8A6E;
+  --sc-accent-soft: #E6F5EF;
+}
+
+body {
+  background: var(--sc-bg);
+  color: var(--sc-ink);
+  font-family: var(--font-body), sans-serif;
+}
+
+.font-display {
+  font-family: var(--font-display), sans-serif;
+}
