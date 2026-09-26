@@ -75,9 +75,7 @@ export default function NewProductPage() {
   const [freeShipping, setFreeShipping] = useState(false);
   const [voucherCode, setVoucherCode] = useState("");
   const [tags, setTags] = useState("");
-  const [removeBg, setRemoveBg] = useState(true);
   const [video, setVideo] = useState<File | null>(null);
-
   const [publishing, setPublishing] = useState(false);
   const [publishError, setPublishError] = useState<string | null>(null);
 
@@ -147,7 +145,6 @@ export default function NewProductPage() {
     );
     formData.append("ai_generated", String(aiGenerated));
     formData.append("ai_flagged_needs_review", String(draft?.needs_review || false));
-    formData.append("remove_bg", String(removeBg));
 
     const res = await apiFetchMultipart("/products", formData);
     setPublishing(false);
@@ -197,10 +194,6 @@ export default function NewProductPage() {
             ))}
           </div>
         )}
-        <label className="flex items-center gap-2 text-sm mt-3">
-          <input type="checkbox" checked={removeBg} onChange={(e) => setRemoveBg(e.target.checked)} />
-          Remove background automatically (transparent PNG)
-        </label>
 
         <div className="mt-5">
           <label className="block text-sm mb-1">Product video (optional)</label>
