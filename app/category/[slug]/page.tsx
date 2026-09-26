@@ -5,14 +5,8 @@ import ProductGrid from "@/components/ProductGrid";
 import Footer from "@/components/Footer";
 import { fetchCategories, getCategoryBySlug } from "@/lib/categories";
 import { fetchProducts } from "@/lib/server-products";
-export const dynamic = "force-dynamic";
 
-// Categories are dynamic now (an admin can add one at any time), so this
-// fetches the current list at build/request time instead of a fixed array.
-export async function generateStaticParams() {
-  const categoryList = await fetchCategories();
-  return categoryList.map((c) => ({ slug: c.slug }));
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   const category = await getCategoryBySlug(params.slug);
