@@ -16,6 +16,5 @@ export interface Product {
   videoUrl?: string; // full URL to the uploaded product video, if any
   averageRating?: number | null;
   reviewCount?: number;
+  isFlashDeal?: boolean; // admin-pinned to the top of the Deals page's Flash Deals
 }
-
-

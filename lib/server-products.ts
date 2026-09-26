@@ -17,6 +17,7 @@ interface BackendProduct {
   tags: string[];
   average_rating: number | null;
   review_count: number;
+  is_flash_deal?: boolean;
 }
 
 function mapProduct(p: BackendProduct): Product {
@@ -38,6 +39,7 @@ function mapProduct(p: BackendProduct): Product {
     videoUrl: p.video_url ? resolveImageUrl(p.video_url) : undefined,
     averageRating: p.average_rating,
     reviewCount: p.review_count,
+    isFlashDeal: !!(p.is_flash_deal && p.discount_pct),
   };
 }
 
