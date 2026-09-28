@@ -115,6 +115,13 @@ export default function AdminCategoriesPage() {
   const [draftOrder, setDraftOrder] = useState<string[] | null>(null);
   const [savingOrder, setSavingOrder] = useState(false);
   const [orderError, setOrderError] = useState<string | null>(null);
+  // Category being renamed (by slug) and the form's values.
+  const [editing, setEditing] = useState<string | null>(null);
+  const [editName, setEditName] = useState("");
+  const [editTagline, setEditTagline] = useState("");
+  const [savingEdit, setSavingEdit] = useState(false);
+  const [editError, setEditError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
 
   async function load() {
     setCategories(await fetchCategories());
@@ -153,6 +160,44 @@ export default function AdminCategoriesPage() {
     load();
   }
 
+  function startEdit(c: CategoryMeta) {
+    setEditing(c.slug);
+    setEditName(c.name);
+    setEditTagline(c.tagline ?? "");
+    setEditError(null);
+    setNotice(null);
+  }
+
+  async function saveEdit(c: CategoryMeta) {
+    const name = editName.replace(/\s+/g, " ").trim();
+    if (!name) {
+      setEditError("Enter a name.");
+      return;
+    }
+    const changes: { name?: string; tagline?: string } = {};
+    if (name !== c.name) changes.name = name;
+    if (editTagline.trim() !== (c.tagline ?? "")) changes.tagline = editTagline.trim();
+    if (Object.keys(changes).length === 0) {
+      setEditing(null);
+      return;
+    }
+    setSavingEdit(true);
+    setEditError(null);
+    const res = await apiFetch(`/categories/${encodeURIComponent(c.slug)}`, {
+      method: "PATCH",
+      body: JSON.stringify(changes),
+    });
+    setSavingEdit(false);
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      setEditError(extractErrorMessage(body, "Couldn't save the category."));
+      return;
+    }
+    setEditing(null);
+    if (changes.name) setNotice(`Renamed “${c.name}” to “${name}”. Its products moved with it.`);
+    load();
+  }
+
   useEffect(() => {
     if (authLoading || user?.role !== "admin") return;
     load();
@@ -186,8 +231,16 @@ export default function AdminCategoriesPage() {
       <h1 className="font-display text-3xl font-semibold mb-2">Manage categories</h1>
       <p className="text-sm text-sc-muted mb-8">
         Set a banner image for each category so it shows on the homepage category strip and the Categories page
-        instead of a blank card. Use the arrows to choose the order categories appear in across the store.
+        instead of a blank card. Use the arrows to choose the order categories appear in across the store, and
+        Edit to rename a category — its products move with it.
       </p>
+
+      {notice && (
+        <div className="mb-4 flex items-center justify-between gap-3 rounded-xl border border-sc-border bg-white px-4 py-3 text-sm" role="status">
+          <span>{notice}</span>
+          <button onClick={() => setNotice(null)} className="text-xs font-semibold text-sc-muted">Dismiss</button>
+        </div>
+      )}
 
       {draftOrder && (
         <div className="sticky top-4 z-10 mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-sc-accent bg-sc-accent-soft px-4 py-3">
@@ -219,11 +272,11 @@ export default function AdminCategoriesPage() {
       ) : (
         <div className="space-y-3">
           {ordered.map((c, i) => (
-            <div key={c.id} className="bg-white border border-sc-border rounded-xl p-4 flex items-center gap-4">
+            <div key={c.id} className="bg-white border border-sc-border rounded-xl p-4 flex flex-wrap sm:flex-nowrap items-center gap-4">
               <div className="flex flex-col items-center gap-0.5">
                 <button
                   onClick={() => move(i, -1)}
-                  disabled={i === 0}
+                  disabled={i === 0 || editing !== null}
                   aria-label={`Move ${c.name} up`}
                   className="rounded p-1 text-sc-muted hover:bg-[#F3F2EE] disabled:opacity-25"
                 >
@@ -232,7 +285,7 @@ export default function AdminCategoriesPage() {
                 <span className="text-[11px] font-semibold text-sc-faint">{i + 1}</span>
                 <button
                   onClick={() => move(i, 1)}
-                  disabled={i === ordered.length - 1}
+                  disabled={i === ordered.length - 1 || editing !== null}
                   aria-label={`Move ${c.name} down`}
                   className="rounded p-1 text-sc-muted hover:bg-[#F3F2EE] disabled:opacity-25"
                 >
@@ -243,10 +296,57 @@ export default function AdminCategoriesPage() {
                 className="w-20 h-20 rounded-lg bg-[#F3F2EE] bg-cover bg-center flex-shrink-0"
                 style={c.image_url ? { backgroundImage: `url(${resolveImageUrl(c.image_url)})` } : undefined}
               />
-              <div className="flex-1">
-                <div className="text-sm font-semibold">{c.name}</div>
-                {c.tagline && <div className="text-xs text-sc-muted">{c.tagline}</div>}
-              </div>
+              {editing === c.slug ? (
+                <form
+                  className="flex-1 min-w-0 space-y-2"
+                  onSubmit={(e) => { e.preventDefault(); saveEdit(c); }}
+                >
+                  <label className="block text-xs font-semibold text-sc-muted">
+                    Name
+                    <input
+                      value={editName}
+                      onChange={(e) => setEditName(e.target.value)}
+                      maxLength={60}
+                      autoFocus
+                      autoComplete="off"
+                      className="mt-1 w-full rounded-lg border border-sc-border px-3 py-2 text-sm font-normal text-sc-ink"
+                    />
+                  </label>
+                  <label className="block text-xs font-semibold text-sc-muted">
+                    Tagline (optional)
+                    <input
+                      value={editTagline}
+                      onChange={(e) => setEditTagline(e.target.value)}
+                      maxLength={160}
+                      autoComplete="off"
+                      className="mt-1 w-full rounded-lg border border-sc-border px-3 py-2 text-sm font-normal text-sc-ink"
+                    />
+                  </label>
+                  {editError && <p className="text-xs text-[#DC2626]">{editError}</p>}
+                  <div className="flex gap-2">
+                    <button
+                      type="submit"
+                      disabled={savingEdit}
+                      className="rounded-lg px-4 py-1.5 text-xs font-semibold text-white disabled:opacity-60"
+                      style={{ background: "var(--sc-accent)" }}
+                    >
+                      {savingEdit ? "Saving…" : "Save"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { setEditing(null); setEditError(null); }}
+                      className="rounded-lg border border-sc-border bg-white px-3 py-1.5 text-xs font-semibold"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-semibold break-words">{c.name}</div>
+                  {c.tagline && <div className="text-xs text-sc-muted">{c.tagline}</div>}
+                </div>
+              )}
               <input
                 ref={(el) => { fileInputRefs.current[c.slug] = el; }}
                 type="file"
@@ -257,6 +357,16 @@ export default function AdminCategoriesPage() {
                   if (file) handleImageSelected(c.slug, file);
                 }}
               />
+              {editing !== c.slug && (
+                <button
+                  onClick={() => startEdit(c)}
+                  disabled={!!draftOrder}
+                  title={draftOrder ? "Save or discard the new order first" : undefined}
+                  className="text-xs font-semibold border border-sc-border rounded-lg px-4 py-2 disabled:opacity-50"
+                >
+                  Edit
+                </button>
+              )}
               <button
                 onClick={() => fileInputRefs.current[c.slug]?.click()}
                 disabled={uploadingSlug === c.slug}
