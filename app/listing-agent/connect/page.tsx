@@ -9,6 +9,8 @@ import { apiFetch, extractErrorMessage } from "@/lib/api";
 /**
  * One-click connect: Listing Agent sends the store admin here. Approving creates an API key
  * on the backend, which sends it straight to Listing Agent — nobody copies keys by hand.
+ * When Listing Agent runs on the admin's own PC (localhost), the hosted backend can't reach it,
+ * so the backend returns the key and this page submits it to Listing Agent from the browser.
  */
 export default function ListingAgentConnectPage() {
   return (
@@ -24,6 +26,24 @@ function host(url: string | null): string {
   } catch {
     return "";
   }
+}
+
+/** Submit the key to Listing Agent's callback as a normal form post (a page navigation, so it
+ *  also works for http://localhost). Listing Agent then redirects back to its Stores page. */
+function postToListingAgent(action: string, fields: Record<string, string>) {
+  const form = document.createElement("form");
+  form.method = "POST";
+  form.action = action;
+  form.style.display = "none";
+  for (const [name, value] of Object.entries(fields)) {
+    const input = document.createElement("input");
+    input.type = "hidden";
+    input.name = name;
+    input.value = value;
+    form.appendChild(input);
+  }
+  document.body.appendChild(form);
+  form.submit();
 }
 
 function withParam(url: string, param: string): string {
@@ -54,6 +74,16 @@ function Connect() {
       if (!res.ok) {
         setError(extractErrorMessage(await res.json().catch(() => ({})), "Couldn't connect. Please try again."));
         setBusy(false);
+        return;
+      }
+      const out = await res.json().catch(() => ({}));
+      if (out && out.deliver === "browser" && typeof out.api_key === "string") {
+        // Always post to the callback this page was opened with, never one from the response.
+        postToListingAgent(callbackUrl, {
+          state,
+          api_key: out.api_key,
+          store_name: typeof out.store_name === "string" ? out.store_name : "",
+        });
         return;
       }
       window.location.href = withParam(returnUrl, "success=1");
